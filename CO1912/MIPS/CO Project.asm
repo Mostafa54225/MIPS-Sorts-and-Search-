@@ -1,16 +1,16 @@
 .data
-    myarray: .space 40  
-    enterNums: .asciiz "Enter 10 Numbers \n"
-    enterChars: .asciiz "Enter 10 Characters \n"
-	choose: .asciiz "\n1: for insertion sort\n2: for Merge Sort\n3: for Search (Binary Search)\n4: to Exit.\n"
-	chooseNum: .asciiz "Choose a number:\n"
-	chooseChar: .asciiz "Choose a Character:\n"
-	warning: .asciiz "!!!! You Should Sort the array first!!!!\n"
-	newLine: .asciiz "\n"
-	foundItem: .asciiz "\nItem Found In Index: "
-	notFound: .asciiz "Item not Found\n"
-	charOrNum: .asciiz "1 - Numbers || 2 - Cahracters?\n"
-	length: .word 10
+    myarray: 		.space 40  
+    enterNums: 		.asciiz "Enter 10 Numbers \n"
+    enterChars: 		.asciiz "Enter 10 Characters \n"
+	choose: 			.asciiz "\n1: for insertion sort\n2: for Merge Sort\n3: for Search (Binary Search)\n4: to Exit.\n"
+	chooseNum:		.asciiz "Choose a number:\n"
+	chooseChar: 		.asciiz "Choose a Character:\n"
+	warning: 		.asciiz "!!!! You Should Sort the array first!!!!\n"
+	newLine: 		.asciiz "\n"
+	foundItem:		.asciiz "\nItem Found In Index: "
+	notFound: 		.asciiz "Item not Found\n"
+	charOrNum: 		.asciiz "1 - Numbers || 2 - Cahracters?\n"
+	length: 			.word 10
 .text
     li $v0,4
     la $a0,charOrNum
@@ -34,35 +34,35 @@ scanArray:
 	beq $s3, 1, forNumbers
 	
 	forChars:
-	li $v0,4
-    la $a0,enterChars
-    syscall
-	j loopScanChars
+		li $v0,4
+    		la $a0,enterChars
+    		syscall
+		j loopScanChars
 	
 	forNumbers:
-	li $v0,4
-    la $a0,enterNums
-    syscall
-	j loopScanNumbers
+		li $v0,4
+    		la $a0,enterNums
+    		syscall
+		j loopScanNumbers
 	
 	loopScanNumbers:		
-	beq  $t0,40,exitScan				# if $t0 == 40 exit otherwise continue
-    li $v0,5							# to read an item
-    syscall							
-    sw $v0,myarray($t0)				# store the item into array
-    addi $t0, $t0, 4					# add 4 into i to access the next element in the array
-    j loopScanNumbers						# loop again until $t0 equal to 40
+		beq  $t0,40,exitScan					# if $t0 == 40 exit otherwise continue
+    		li $v0,5								# to read an item
+   	 	syscall							
+    		sw $v0,myarray($t0)					# store the item into array
+    		addi $t0, $t0, 4						# add 4 into i to access the next element in the array
+    		j loopScanNumbers					# loop again until $t0 equal to 40
     
     loopScanChars:
-    beq  $t0,40,exitScan				# if $t0 == 40 exit otherwise continue
-    li $v0,12							# to read an item
-    syscall							
-    sw $v0,myarray($t0)				# store the item into array
-    addi $t0, $t0, 4					# add 4 into i to access the next element in the array
-    j loopScanChars						# loop again until $t0 equal to 40
+    		beq  $t0,40,exitScan					# if $t0 == 40 exit otherwise continue
+    		li $v0,12							# to read an item
+    		syscall							
+    		sw $v0,myarray($t0)					# store the item into array
+    		addi $t0, $t0, 4						# add 4 into i to access the next element in the array
+    		j loopScanChars						# loop again until $t0 equal to 40
     
     exitScan:
-    	jr $ra
+    		jr $ra
     	
     	
     	########################## END SCAN ARRAY ##########################
@@ -71,20 +71,20 @@ scanArray:
     
     	########################## START MAIN WHILE LOOP ##########################
     MainWhile:
-    # for choose between sorting and searching
-    li $v0, 4
-    la, $a0, choose
-    syscall
+    		# for choose between sorting and searching
+    		li $v0, 4
+    		la, $a0, choose
+    		syscall
     
-    li $v0,5						# to read an item $a3
-    syscall
-    move $a3, $v0
+    		li $v0,5						# to read an item $a3
+    		syscall
+    		move $a3, $v0
     
-    # for choosing between sorts and search
-    beq $a3, 1, i
-    beq $a3, 2, helpMergeSort
- 	beq $a3, 3, checkArray   
- 	beq $a3, 4, exitProgram
+    		# for choosing between sorts and search
+    		beq $a3, 1, i
+    		beq $a3, 2, helpMergeSort
+ 		beq $a3, 3, checkArray   
+ 		beq $a3, 4, exitProgram
  	
  	########################## END MAIN WHILE LOOP ##########################
  	
@@ -265,53 +265,51 @@ checkArray:
     	j MainWhile
     	
     bin:
-    beq $s3, 1, Num
-    	beq $s3, 2, Char
+    		beq $s3, 1, Num
+    		beq $s3, 2, Char
     	
     Num:
-    	li $v0,4
-    	la $a0,chooseNum
-    	syscall
-    	li $v0, 5
-	syscall
-   	j c
+    		li $v0,4
+    		la $a0,chooseNum
+    		syscall
+    		li $v0, 5
+		syscall
+   		j cont
     
 	Char:	
-	li $v0,4
-    	la $a0,chooseChar
-    	syscall
-    	li $v0, 12
-	syscall
-	j c
+		li $v0,4
+    		la $a0,chooseChar
+    		syscall
+    		li $v0, 12
+		syscall
+		j cont
     
-	c:
-	move $a2, $v0
-    	jal binarySearch
-    	addi $t0, $v1, 0
+	cont:
+		move $a2, $v0
+    		jal binarySearch
+    		addi $t0, $v1, 0
+    		beq $t0, -1, notFoundItem
     	
-    	beq $t0, -1, notFoundItem
-    	
-    		
-    	li $v0,4
-    	la $a0,foundItem
-    	syscall
+    		li $v0,4
+    		la $a0,foundItem
+    		syscall
     	
     	
 		li $v0, 1
 		move $a0, $t0
 		syscall
 		li $v0,4
-    	la $a0,newLine
-    	syscall
+    		la $a0,newLine
+   	 	syscall
 		jal printArray
 		j MainWhile
 		
 	notFoundItem:
-    	li $v0,4
+    		li $v0,4
 	    la $a0,notFound
-    	syscall
-    	jal printArray
-    	j MainWhile
+    		syscall
+    		jal printArray
+    		j MainWhile
     	
 
 #$t7 = Left , $t2 = Right, $t3 = Mid 
@@ -408,44 +406,44 @@ printArray:
 	beq $s3, 1, printNums
 	
 	printNums:
-	lw $a1, length
-	addi $t0, $zero, 0				# i = 0
-	loopChar: slt $t3, $t0, $a1			# set $t3 = 1 if $t0 < $a1   => i < n
-	beq $t3, 0, exit
-	sll $t4, $t0, 2					# i * 4
-	add $t4, $t4, $t1				# base + offset
-	lw $t4, 0($t4)					# arr[i]
-	li $v0, 1						# to print an integer
-	move $a0, $t4					# move $t4, to $a0 to print it
-	syscall
+		lw $a1, length
+		addi $t0, $zero, 0				# i = 0
+		loopChar: slt $t3, $t0, $a1			# set $t3 = 1 if $t0 < $a1   => i < n
+		beq $t3, 0, exit
+		sll $t4, $t0, 2					# i * 4
+		add $t4, $t4, $t1				# base + offset
+		lw $t4, 0($t4)					# arr[i]
+		li $v0, 1						# to print an integer
+		move $a0, $t4					# move $t4, to $a0 to print it
+		syscall
 	
-	# To print a empty character
-	li $a0, 32					
-    li $v0, 11  				
-    syscall
+		# To print a empty character
+		li $a0, 32					
+    		li $v0, 11  				
+    		syscall
 	
-	add $t0, $t0, 1
-	j loopChar
+		add $t0, $t0, 1
+		j loopChar
 	
 	printChars:
-	lw $a1, length
-	addi $t0, $zero, 0				# i = 0
-	loop: slt $t3, $t0, $a1			# set $t3 = 1 if $t0 < $a1   => i < n
-	beq $t3, 0, exit
-	sll $t4, $t0, 2					# i * 4
-	add $t4, $t4, $t1				# base + offset
-	lw $t4, 0($t4)					# arr[i]
-	li $v0, 11						# to print an integer
-	move $a0, $t4					# move $t4, to $a0 to print it
-	syscall
+		lw $a1, length
+		addi $t0, $zero, 0				# i = 0
+		loop: slt $t3, $t0, $a1			# set $t3 = 1 if $t0 < $a1   => i < n
+		beq $t3, 0, exit
+		sll $t4, $t0, 2					# i * 4
+		add $t4, $t4, $t1				# base + offset
+		lw $t4, 0($t4)					# arr[i]
+		li $v0, 11						# to print an integer
+		move $a0, $t4					# move $t4, to $a0 to print it
+		syscall
 	
-	# To print a empty character
-	li $a0, 32					
-    li $v0, 11  				
-    syscall
+		# To print a empty character
+		li $a0, 32					
+    		li $v0, 11  				
+    		syscall
 	
-	add $t0, $t0, 1
-	j loop
+		add $t0, $t0, 1
+		j loop
 
 		########################## END PRINT ARRAY ##########################
 		
