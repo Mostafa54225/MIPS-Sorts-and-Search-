@@ -1,17 +1,23 @@
 .data
-    myarray:.space 40  
-    st:.asciiz "Enter the 10 Elements \n"
+    myarray: .space 40  
+    enterNums: .asciiz "Enter 10 Numbers \n"
+    enterChars: .asciiz "Enter 10 Characters \n"
 	choose: .asciiz "\n1: for insertion sort\n2: for Merge Sort\n3: for Search (Binary Search)\n4: to Exit.\n"
 	chooseNum: .asciiz "Choose a number:\n"
+	chooseChar: .asciiz "Choose a Character:\n"
 	warning: .asciiz "!!!! You Should Sort the array first!!!!\n"
 	newLine: .asciiz "\n"
-	foundItem: .asciiz "Item Found In Index: "
+	foundItem: .asciiz "\nItem Found In Index: "
 	notFound: .asciiz "Item not Found\n"
+	charOrNum: .asciiz "1 - Numbers || 2 - Cahracters?\n"
 	length: .word 10
 .text
     li $v0,4
-    la $a0,st
+    la $a0,charOrNum
     syscall
+    li $v0, 5
+    syscall
+    move $s3, $v0
     jal scanArray
     #li $v0, 0
     la $t1, myarray				# Load the start address of the array
@@ -19,19 +25,46 @@
     j MainWhile
     
  
+ 
+
  		########################## START SCAN ARRAY ##########################
 scanArray:  
 	add $t0,$zero,0					# initialize i = 0
-	loopScan:		
+	beq $s3, 2, forChars
+	beq $s3, 1, forNumbers
+	
+	forChars:
+	li $v0,4
+    la $a0,enterChars
+    syscall
+	j loopScanChars
+	
+	forNumbers:
+	li $v0,4
+    la $a0,enterNums
+    syscall
+	j loopScanNumbers
+	
+	loopScanNumbers:		
 	beq  $t0,40,exitScan				# if $t0 == 40 exit otherwise continue
-    li $v0,5						# to read an item
+    li $v0,5							# to read an item
     syscall							
     sw $v0,myarray($t0)				# store the item into array
-    addi $t0, $t0, 4				# add 4 into i to access the next element in the array
-    j loopScan						# loop again until $t0 equal to 40
+    addi $t0, $t0, 4					# add 4 into i to access the next element in the array
+    j loopScanNumbers						# loop again until $t0 equal to 40
+    
+    loopScanChars:
+    beq  $t0,40,exitScan				# if $t0 == 40 exit otherwise continue
+    li $v0,12							# to read an item
+    syscall							
+    sw $v0,myarray($t0)				# store the item into array
+    addi $t0, $t0, 4					# add 4 into i to access the next element in the array
+    j loopScanChars						# loop again until $t0 equal to 40
     
     exitScan:
     	jr $ra
+    	
+    	
     	########################## END SCAN ARRAY ##########################
     
     
@@ -232,15 +265,27 @@ checkArray:
     	j MainWhile
     	
     bin:
+    beq $s3, 1, Num
+    	beq $s3, 2, Char
+    	
+    Num:
     	li $v0,4
     	la $a0,chooseNum
     	syscall
-    	
-    	
     	li $v0, 5
-		syscall
-		
-		move $a2, $v0
+	syscall
+   	j c
+    
+	Char:	
+	li $v0,4
+    	la $a0,chooseChar
+    	syscall
+    	li $v0, 12
+	syscall
+	j c
+    
+	c:
+	move $a2, $v0
     	jal binarySearch
     	addi $t0, $v1, 0
     	
@@ -359,6 +404,30 @@ isArraySorted:
 		########################## START PRINT ARRAY ##########################
 		
 printArray:
+	beq $s3, 2, printChars
+	beq $s3, 1, printNums
+	
+	printNums:
+	lw $a1, length
+	addi $t0, $zero, 0				# i = 0
+	loopChar: slt $t3, $t0, $a1			# set $t3 = 1 if $t0 < $a1   => i < n
+	beq $t3, 0, exit
+	sll $t4, $t0, 2					# i * 4
+	add $t4, $t4, $t1				# base + offset
+	lw $t4, 0($t4)					# arr[i]
+	li $v0, 1						# to print an integer
+	move $a0, $t4					# move $t4, to $a0 to print it
+	syscall
+	
+	# To print a empty character
+	li $a0, 32					
+    li $v0, 11  				
+    syscall
+	
+	add $t0, $t0, 1
+	j loopChar
+	
+	printChars:
 	lw $a1, length
 	addi $t0, $zero, 0				# i = 0
 	loop: slt $t3, $t0, $a1			# set $t3 = 1 if $t0 < $a1   => i < n
@@ -366,7 +435,7 @@ printArray:
 	sll $t4, $t0, 2					# i * 4
 	add $t4, $t4, $t1				# base + offset
 	lw $t4, 0($t4)					# arr[i]
-	li $v0, 1						# to print an integer
+	li $v0, 11						# to print an integer
 	move $a0, $t4					# move $t4, to $a0 to print it
 	syscall
 	
